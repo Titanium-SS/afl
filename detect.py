@@ -3,6 +3,7 @@ import tensorflow as tf
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 if len(physical_devices) > 0:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
+tf.get_logger().setLevel(tf._logging.ERROR)  # Suppress TensorFlow logging
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import core.utils as utils
@@ -11,8 +12,10 @@ from tensorflow.python.saved_model import tag_constants
 from PIL import Image
 import cv2
 import numpy as np
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tensorflow.compat.v1 import ConfigProto, InteractiveSession
+
+# Suppress Abseil's logging
+logging.set_verbosity(logging.ERROR)
 
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416', 'path to weights file')
@@ -88,7 +91,6 @@ def main(_argv):
         class_names = [line.strip() for line in f.readlines()]
     for i in range(valid_detections[0]):
         print(f"Detected: {class_names[int(classes[0][i])]}\t Confidence score: {scores[0][i]}")
-
 
 if __name__ == '__main__':
     try:
