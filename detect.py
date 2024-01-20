@@ -17,6 +17,7 @@ from tensorflow.compat.v1 import ConfigProto, InteractiveSession
 # Suppress Abseil's logging
 logging.set_verbosity(logging.ERROR)
 
+
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416', 'path to weights file')
 flags.DEFINE_integer('size', 416, 'resize images to')
@@ -31,6 +32,7 @@ def main(_argv):
     config = ConfigProto()
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
+
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     input_size = FLAGS.size
     image_path = FLAGS.image
@@ -40,9 +42,7 @@ def main(_argv):
     image_data = cv2.resize(original_image, (input_size, input_size))
     image_data = image_data / 255.
 
-    images_data = []
-    for i in range(1):
-        images_data.append(image_data)
+    images_data = [image_data]  # Batch processing for a single image
     images_data = np.asarray(images_data).astype(np.float32)
 
     if FLAGS.framework == 'tflite':
@@ -90,7 +90,7 @@ def main(_argv):
     with open('data/classes/coco.names', 'r') as f:
         class_names = [line.strip() for line in f.readlines()]
     for i in range(valid_detections[0]):
-        print(f"Detected: {class_names[int(classes[0][i])]}\t Confidence score: {scores[0][i]}")
+        print(f"{class_names[int(classes[0][i])]}\t: {scores[0][i]*100:.2f} %")
 
 if __name__ == '__main__':
     try:
