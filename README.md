@@ -17,6 +17,7 @@ python detect.py --weights  ./checkpoints/yolov4-416-fp16.tflite --size 416 --mo
 # Run demo tflite model (video)
  python detectvideo.py --weights  ./checkpoints/yolov4-416-fp16.tflite --size 416 --model yolov4 --video ./data/AFL/video1.mp4 --framework tflite
 ```
+running infrenece on video returns a folder with individual frames marked with predictions performed by the model
 
 <br>
 
